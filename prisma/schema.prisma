@@ -24,7 +24,7 @@ model Property {
   address     String
   description String?
   userId      Int?      @unique
-  photos    String[]
+  imageUrl    String
   price       Float
   status      String
   createdAt   DateTime  @default(now())

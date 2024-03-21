@@ -9,43 +9,53 @@ import { TOmitProperty } from 'src/shared/types/property.type';
 export class PropertyRepository {
   async create(createPropertyDto: CreatePropertyDto): Promise<TOmitProperty> {
     const prismaInstance: PrismaClient = PrismaInstance.getInstance();
-    const createdProperty: TOmitProperty = await prismaInstance.property.create({
-      data: {
-        name: createPropertyDto.name,
-        preparation: createPropertyDto.preparation,
-        ingredients: createPropertyDto.ingredients,
-        userId: createPropertyDto.userId,
+    const createdProperty: TOmitProperty = await prismaInstance.property.create(
+      {
+        data: {
+          type: createPropertyDto.type,
+          address: createPropertyDto.address,
+          description: createPropertyDto.description,
+          imageUrl: createPropertyDto.imageUrl,
+          price: createPropertyDto.price,
+          userId: createPropertyDto.userId,
+          status: createPropertyDto.status,
+        },
+        select: {
+          id: true,
+          type: true,
+          address: true,
+          description: true,
+          imageUrl: true,
+          userId: true,
+          price: true,
+          status: true,
+        },
       },
-      select: {
-        id: true,
-        ingredients: true,
-        imageUrl: true,
-        name: true,
-        preparation: true,
-        userId: true,
-      },
-    });
+    );
 
     return createdProperty;
   }
 
   async findAll(): Promise<TOmitProperty[]> {
     const prismaInstance: PrismaClient = PrismaInstance.getInstance();
-    const allPropertys: TOmitProperty[] = await prismaInstance.property.findMany({
-      select: {
-        id: true,
-        name: true,
-        userId: true,
-        imageUrl: true,
-        ingredients: true,
-        preparation: true,
-      },
-      where: {
-        deletedAt: null,
-      },
-    });
+    const allProperties: TOmitProperty[] =
+      await prismaInstance.property.findMany({
+        select: {
+          id: true,
+          type: true,
+          address: true,
+          description: true,
+          userId: true,
+          imageUrl: true,
+          price: true,
+          status: true,
+        },
+        where: {
+          deletedAt: null,
+        },
+      });
 
-    return allPropertys;
+    return allProperties;
   }
 
   async findOne(id: number): Promise<TOmitProperty> {
@@ -57,11 +67,13 @@ export class PropertyRepository {
       },
       select: {
         id: true,
-        name: true,
+        type: true,
+        address: true,
         userId: true,
+        description: true,
         imageUrl: true,
-        ingredients: true,
-        preparation: true,
+        price: true,
+        status: true,
       },
     });
 
@@ -70,23 +82,29 @@ export class PropertyRepository {
 
   async addImage(id: number, imageUrl: string): Promise<TOmitProperty> {
     const prismaInstance: PrismaClient = PrismaInstance.getInstance();
-    const updatedProperty: TOmitProperty = await prismaInstance.property.update({
-      where: {
-        id: id,
-        deletedAt: null,
+    const updatedProperty: TOmitProperty = await prismaInstance.property.update(
+      {
+        where: {
+          id: id,
+          deletedAt: null,
+        },
+        data: {
+          imageUrl: {
+            push: imageUrl,
+          },
+        },
+        select: {
+          id: true,
+          type: true,
+          address: true,
+          description: true,
+          userId: true,
+          imageUrl: true,
+          price: true,
+          status: true,
+        },
       },
-      data: {
-        imageUrl: imageUrl,
-      },
-      select: {
-        id: true,
-        name: true,
-        userId: true,
-        imageUrl: true,
-        ingredients: true,
-        preparation: true,
-      },
-    });
+    );
 
     return updatedProperty;
   }
@@ -96,48 +114,59 @@ export class PropertyRepository {
     updatePropertyDto: UpdatePropertyDto,
   ): Promise<TOmitProperty> {
     const prismaInstance: PrismaClient = PrismaInstance.getInstance();
-    const updatedProperty: TOmitProperty = await prismaInstance.property.update({
-      where: {
-        id: id,
-        deletedAt: null,
+    const updatedProperty: TOmitProperty = await prismaInstance.property.update(
+      {
+        where: {
+          id: id,
+          deletedAt: null,
+        },
+        data: {
+          type: updatePropertyDto.type,
+          address: updatePropertyDto.address,
+          description: updatePropertyDto.description,
+          imageUrl: updatePropertyDto.imageUrl,
+          price: updatePropertyDto.price,
+          status: updatePropertyDto.status,
+          userId: updatePropertyDto.userId,
+        },
+        select: {
+          id: true,
+          type: true,
+          address: true,
+          userId: true,
+          description: true,
+          imageUrl: true,
+          price: true,
+          status: true,
+        },
       },
-      data: {
-        name: updatePropertyDto.name,
-        preparation: updatePropertyDto.preparation,
-        ingredients: updatePropertyDto.ingredients,
-        userId: updatePropertyDto.userId,
-      },
-      select: {
-        id: true,
-        name: true,
-        userId: true,
-        imageUrl: true,
-        ingredients: true,
-        preparation: true,
-      },
-    });
+    );
 
     return updatedProperty;
   }
 
   async remove(id: number): Promise<TOmitProperty> {
     const prismaInstance: PrismaClient = PrismaInstance.getInstance();
-    const deletedProperty: TOmitProperty = await prismaInstance.property.update({
-      where: {
-        id: id,
+    const deletedProperty: TOmitProperty = await prismaInstance.property.update(
+      {
+        where: {
+          id: id,
+        },
+        data: {
+          deletedAt: new Date(),
+        },
+        select: {
+          id: true,
+          type: true,
+         userId: true,
+          address: true,
+          description: true,
+          imageUrl: true,
+          price: true,
+          status: true,
+        },
       },
-      data: {
-        deletedAt: new Date(),
-      },
-      select: {
-        id: true,
-        name: true,
-        userId: true,
-        imageUrl: true,
-        ingredients: true,
-        preparation: true,
-      },
-    });
+    );
 
     return deletedProperty;
   }
